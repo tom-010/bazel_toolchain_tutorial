@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<!-- saved from url=(0072)https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html -->
+<html lang="en" itemscope="" itemtype="https://schema.org/WebPage"><link type="text/css" rel="stylesheet" id="dark-mode-custom-link"><link type="text/css" rel="stylesheet" id="dark-mode-general-link"><style lang="en" type="text/css" id="dark-mode-custom-style"></style><style lang="en" type="text/css" id="dark-mode-native-style"></style><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Only show Bazel version in title if it's a release -->
+    <title>Configuring C++ toolchains - Bazel main</title>
+
+    <link rel="canonical" href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html">
+
+    <!-- Webfont -->
+    <style class="anchorjs"></style><link href="./tutorial_files/css" rel="stylesheet">
+
+    <link rel="shortcut icon" type="image/png" href="https://docs.bazel.build/images/favicon.ico">
+
+    <!-- Bootstrap -->
+    <link href="./tutorial_files/bootstrap.min.css" rel="stylesheet">
+    <link href="./tutorial_files/font-awesome.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="./tutorial_files/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Configuring C++ toolchains">
+    <meta name="og:image" content="/images/bazel-og-image.png">
+
+    <!-- google search console verification -->
+    <meta name="google-site-verification" content="ftWLOiP2hnDW4Cw3LUGEaXU83RVIpiyxwaXFFhoakzs">
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="https://www.bazel.build/">
+            <img class="navbar-logo" src="./tutorial_files/bazel-navbar.svg">
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+          </ul>
+          <form class="navbar-form navbar-right" action="https://docs.bazel.build/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="009927877080525621790:2pxlpaexqpc">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" id="q" class="form-control input-sm" placeholder="Search">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://docs.bazel.build/versions/main/bazel-overview.html">Getting Started</a>
+            </li>
+            <li>
+              <a href="https://docs.bazel.build/versions/main/guide.html">Using Bazel</a>
+            </li>
+            <li>
+              <a href="https://docs.bazel.build/versions/main/skylark/concepts.html">Extending Bazel</a>
+            </li>
+            <li>
+              <a href="https://www.bazel.build/contributing.html">Contributing</a>
+            </li>
+            <li>
+              <a href="https://blog.bazel.build/">Blog</a>
+            </li>
+            <li><a href="https://twitter.com/bazelbuild" class="nav-icon"><i class="fa fa-twitter"></i></a></li>
+            <li><a href="http://stackoverflow.com/questions/tagged/bazel" class="nav-icon"><i class="fa fa-stack-overflow"></i></a></li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-md-2">
+          <a class="btn btn-default btn-lg btn-block sidebar-toggle" data-toggle="collapse" href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#sidebar-nav" aria-expanded="false" aria-controls="sidebar-nav">
+            <i class="glyphicon glyphicon-menu-hamburger"></i> Navigation
+          </a>
+
+          <nav class="sidebar collapse" id="sidebar-nav">
+            <select onchange="location.href=this.value">
+                <option value="" selected="" disabled="" hidden="">Version: main</option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/main/tutorial/cc-toolchain-config.html">
+                    main
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/5.0.0/tutorial/cc-toolchain-config.html">
+                    5.0.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/4.2.2/tutorial/cc-toolchain-config.html">
+                    4.2.2
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/4.2.1/tutorial/cc-toolchain-config.html">
+                    4.2.1
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/4.2.0/tutorial/cc-toolchain-config.html">
+                    4.2.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/4.1.0/tutorial/cc-toolchain-config.html">
+                    4.1.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/4.0.0/tutorial/cc-toolchain-config.html">
+                    4.0.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/3.7.0/tutorial/cc-toolchain-config.html">
+                    3.7.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/3.6.0/tutorial/cc-toolchain-config.html">
+                    3.6.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/3.5.1/tutorial/cc-toolchain-config.html">
+                    3.5.1
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/3.4.0/tutorial/cc-toolchain-config.html">
+                    3.4.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/3.3.0/tutorial/cc-toolchain-config.html">
+                    3.3.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/3.2.0/tutorial/cc-toolchain-config.html">
+                    3.2.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/3.1.0/tutorial/cc-toolchain-config.html">
+                    3.1.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/3.0.0/tutorial/cc-toolchain-config.html">
+                    3.0.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/2.2.0/tutorial/cc-toolchain-config.html">
+                    2.2.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/2.1.0/tutorial/cc-toolchain-config.html">
+                    2.1.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/2.0.0/tutorial/cc-toolchain-config.html">
+                    2.0.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/1.2.0/tutorial/cc-toolchain-config.html">
+                    1.2.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/1.1.0/tutorial/cc-toolchain-config.html">
+                    1.1.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/1.0.0/tutorial/cc-toolchain-config.html">
+                    1.0.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.29.1/tutorial/cc-toolchain-config.html">
+                    0.29.1
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.29.0/tutorial/cc-toolchain-config.html">
+                    0.29.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.28.0/tutorial/cc-toolchain-config.html">
+                    0.28.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.27.0/tutorial/cc-toolchain-config.html">
+                    0.27.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.26.0/tutorial/cc-toolchain-config.html">
+                    0.26.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.25.0/tutorial/cc-toolchain-config.html">
+                    0.25.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.24.0/tutorial/cc-toolchain-config.html">
+                    0.24.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.23.0/tutorial/cc-toolchain-config.html">
+                    0.23.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.22.0/tutorial/cc-toolchain-config.html">
+                    0.22.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.21.0/tutorial/cc-toolchain-config.html">
+                    0.21.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.20.0/tutorial/cc-toolchain-config.html">
+                    0.20.0
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.19.2/tutorial/cc-toolchain-config.html">
+                    0.19.2
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.19.1/tutorial/cc-toolchain-config.html">
+                    0.19.1
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.18.1/tutorial/cc-toolchain-config.html">
+                    0.18.1
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.17.2/tutorial/cc-toolchain-config.html">
+                    0.17.2
+                </option>
+                
+                <!-- reconstruct absolute url for the current page for each doc version -->
+                <option value="/versions/0.17.1/tutorial/cc-toolchain-config.html">
+                    0.17.1
+                </option>
+                
+            </select>
+
+            <!-- If the current version has a explicitly versioned sidebar for the major version -->
+            
+                
+            
+            <h3 id="home">Home<a class="anchorjs-link " href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#home" aria-label="Anchor link for: home" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; line-height: 1; padding-left: 0.375em;"></a></h3>
+<ul class="sidebar-nav">
+  <li><a href="https://docs.bazel.build/versions/main/bazel-overview.html">Overview</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/bazel-vision.html">Vision</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/getting-started.html">Getting Started</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/glossary.html">Glossary</a></li>
+</ul>
+
+<h3 id="installing-bazel">Installing Bazel<a class="anchorjs-link " href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#installing-bazel" aria-label="Anchor link for: installing bazel" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; line-height: 1; padding-left: 0.375em;"></a></h3>
+<ul class="sidebar-nav">
+  <li><a href="https://docs.bazel.build/versions/main/install.html">Overview</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/install-redhat.html">Fedora/CentOS</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/install-os-x.html">macOS</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/install-suse.html">openSUSE</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/install-ubuntu.html">Ubuntu</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/install-windows.html">Windows</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/install-compile-source.html">Compiling from Source</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/install-bazelisk.html">Installing with Bazelisk</a></li>
+</ul>
+
+<h3 id="setting-up-your-environment">Setting up your environment<a class="anchorjs-link " href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#setting-up-your-environment" aria-label="Anchor link for: setting up your environment" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; line-height: 1; padding-left: 0.375em;"></a></h3>
+<ul class="sidebar-nav">
+  <li><a href="https://docs.bazel.build/versions/main/completion.html">Command-Line Completion</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/ide.html">Integrating with IDEs</a></li>
+</ul>
+
+<h3 id="tutorials">Tutorials<a class="anchorjs-link " href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#tutorials" aria-label="Anchor link for: tutorials" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; line-height: 1; padding-left: 0.375em;"></a></h3>
+<ul class="sidebar-nav">
+    <li><a href="https://docs.bazel.build/versions/main/tutorial/cpp.html">C++</a></li>
+    <li><a href="https://docs.bazel.build/versions/main/tutorial/java.html">Java</a></li>
+    <li><a href="https://docs.bazel.build/versions/main/tutorial/android-app.html">Android</a></li>
+    <li><a href="https://docs.bazel.build/versions/main/tutorial/ios-app.html">iOS</a></li>
+</ul>
+
+<h3 id="understanding">Understanding<a class="anchorjs-link " href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#understanding" aria-label="Anchor link for: understanding" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; line-height: 1; padding-left: 0.375em;"></a></h3>
+<ul class="sidebar-nav">
+  <li><a href="https://docs.bazel.build/versions/main/build-ref.html">Core Concepts</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/external.html">External Dependencies</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/bzlmod.html">Bzlmod User Guide</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/configurable-attributes.html">Configurable Attributes</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/platforms-intro.html">Platforms and Toolchains</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/visibility.html">Visibility</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/hermeticity.html">Hermeticity</a></li>
+</ul>
+
+<h3 id="releases">Releases<a class="anchorjs-link " href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#releases" aria-label="Anchor link for: releases" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; line-height: 1; padding-left: 0.375em;"></a></h3>
+<ul class="sidebar-nav">
+  <li><a href="https://docs.bazel.build/versions/main/versioning.html">Release Versioning</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/releases.html">Release Policy</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/backward-compatibility.html">Backward Compatibility</a></li>
+  <li><a href="https://docs.bazel.build/versions/main/updating-bazel.html">Updating Bazel</a></li>
+  <li>
+    <a class="sidebar-nav-heading" data-toggle="collapse" href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#release-notes-menu" aria-expanded="false" aria-controls="release-notes-menu">
+      Release Notes<span class="caret"></span>
+    </a>
+    <ul class="collapse sidebar-nav sidebar-submenu" id="release-notes-menu">
+
+       <li><a href="https://blog.bazel.build/2020/11/10/bazel-4.0-announce.html">Bazel 4.0</a></li>
+       <li><a href="https://blog.bazel.build/2020/10/20/bazel-3-7.html">Bazel 3.7</a></li>
+       <li><a href="https://blog.bazel.build/2020/10/06/bazel-3-6.html">Bazel 3.6</a></li>
+       <li><a href="https://blog.bazel.build/2020/08/26/bazel-3.5.html">Bazel 3.5</a></li>
+       <li><a href="https://blog.bazel.build/2020/07/13/bazel-3-4.html">Bazel 3.4</a></li>
+       <li><a href="https://blog.bazel.build/2020/06/17/bazel-3-3.html">Bazel 3.3</a></li>
+       <li><a href="https://blog.bazel.build/2020/05/27/bazel-3-2.html">Bazel 3.2</a></li>
+    </ul>
+  </li>
+</ul>
+
+
+
+
+
+          </nav>
+        </div>
+
+        <div class="col-md-8">
+          <div class="content">
+            <h1 id="bazel-tutorial-configure-c-toolchains">Bazel Tutorial: Configure C++ Toolchains<a class="anchorjs-link " href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#bazel-tutorial-configure-c-toolchains" aria-label="Anchor link for: bazel tutorial configure c toolchains" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; line-height: 1; padding-left: 0.375em;"></a></h1>
+
+<p>This tutorial uses an example scenario to describe how to configure C++
+toolchains for a project. It’s based on an
+<a href="https://github.com/bazelbuild/examples/tree/HEAD/cpp-tutorial/stage1">example C++ project</a>
+that builds error-free using <code class="highlighter-rouge">clang</code>.</p>
+
+<h2 id="what-youll-learn">What you’ll learn<a class="anchorjs-link " href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#what-youll-learn" aria-label="Anchor link for: what youll learn" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; line-height: 1; padding-left: 0.375em;"></a></h2>
+
+<p>In this tutorial you learn how to:</p>
+
+<ul>
+  <li>Set up the build environment</li>
+  <li>Configure the C++ toolchain</li>
+  <li>Create a Starlark rule that provides additional
+configuration for the <code class="highlighter-rouge">cc_toolchain</code> so that Bazel can build the application
+with <code class="highlighter-rouge">clang</code></li>
+  <li>Confirm expected outcome by running
+<code class="highlighter-rouge">bazel build --config=clang_config //main:hello-world</code> on a Linux machine</li>
+  <li>Build the C++ application</li>
+</ul>
+
+<h2 id="before-you-begin">Before you begin<a class="anchorjs-link " href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#before-you-begin" aria-label="Anchor link for: before you begin" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; line-height: 1; padding-left: 0.375em;"></a></h2>
+
+<h3 id="set-up-the-build-environment">Set up the build environment<a class="anchorjs-link " href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#set-up-the-build-environment" aria-label="Anchor link for: set up the build environment" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; line-height: 1; padding-left: 0.375em;"></a></h3>
+
+<p>This tutorial assumes you are on Linux and have successfully built
+C++ applications and installed the appropriate tooling and libraries.
+The tutorial uses <code class="highlighter-rouge">clang version 9.0.1</code>, which you can install on your system.</p>
+
+<p>Set up your build environment as follows:</p>
+
+<ol>
+  <li>
+    <p>If you have not already done so,
+   <a href="https://docs.bazel.build/versions/main/install-ubuntu.html">download and install Bazel 0.23</a> or later.</p>
+  </li>
+  <li>
+    <p>Download the
+<a href="https://github.com/bazelbuild/examples/tree/HEAD/cpp-tutorial/stage1">example C++ project</a>
+from GitHub and place it in an empty directory on your local machine.</p>
+  </li>
+  <li>
+    <p>Add the following <code class="highlighter-rouge">cc_binary</code> target to the <code class="highlighter-rouge">main/BUILD</code> file:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cc_binary</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">"hello-world"</span><span class="p">,</span>
+    <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span><span class="s">"hello-world.cc"</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Create a <code class="highlighter-rouge">.bazelrc</code> file at the root of the workspace directory with the
+following contents to enable the use of the <code class="highlighter-rouge">--config</code> flag:</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Use our custom-configured c++ toolchain.
+
+build:clang_config --crosstool_top=//toolchain:clang_suite
+
+# Use --cpu as a differentiator.
+
+build:clang_config --cpu=k8
+
+# Use the default Bazel C++ toolchain to build the tools used during the
+# build.
+
+build:clang_config --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>For an entry <code class="highlighter-rouge">build:{config_name} --flag=value</code>, the command line flag
+<code class="highlighter-rouge">--config={config_name}</code> is associated with that particular flag. See
+documentation for the flags used:
+<a href="https://docs.bazel.build/versions/main/user-manual.html#flag--crosstool_top">crosstool_top</a>,
+<a href="https://docs.bazel.build/versions/main/user-manual.html#flag--cpu">cpu</a> and
+<a href="https://docs.bazel.build/versions/main/user-manual.html#flag--host_crosstool_top">host_crosstool_top</a>.</p>
+
+<p>When you build your <a href="https://docs.bazel.build/versions/main/build-ref.html#targets">target</a>
+with <code class="highlighter-rouge">bazel build --config=clang_config //main:hello-world</code>, Bazel uses your
+custom toolchain from the
+<a href="https://docs.bazel.build/versions/main/be/c-cpp.html#cc_toolchain_suite">cc_toolchain_suite</a>
+<code class="highlighter-rouge">//toolchain:clang_suite</code>. The suite may list different
+<a href="https://docs.bazel.build/versions/main/be/c-cpp.html#cc_toolchain">toolchains</a> for different CPUs,
+and that’s why it is differentiated with the flag <code class="highlighter-rouge">--cpu=k8</code>.</p>
+
+<p>Because Bazel uses many internal tools written in C++ during the build, such as
+process-wrapper, the pre-existing default C++ toolchain is specified for
+the host platform, so that these tools are built using that toolchain instead of
+the one created in this tutorial.</p>
+
+<h2 id="configuring-the-c-toolchain">Configuring the C++ toolchain<a class="anchorjs-link " href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#configuring-the-c-toolchain" aria-label="Anchor link for: configuring the c toolchain" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; line-height: 1; padding-left: 0.375em;"></a></h2>
+
+<p>To configure the C++ toolchain, repeatedly build the application and eliminate
+each error one by one as described below.</p>
+
+<p><strong>Note:</strong> This tutorial assumes you’re using Bazel 0.23 or later. If you’re
+using an older release of Bazel, look for the “Configuring CROSSTOOL” tutorial.
+It also assumes <code class="highlighter-rouge">clang version 9.0.1</code>, although the details should only change
+slightly between different versions of clang.</p>
+
+<ol>
+  <li>
+    <p>Run the build with the following command:</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bazel build --config=clang_config //main:hello-world
+</code></pre></div>    </div>
+
+    <p>Because you specified <code class="highlighter-rouge">--crosstool_top=//toolchain:clang_suite</code> in the
+<code class="highlighter-rouge">.bazelrc</code> file, Bazel throws the following error:</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>No such package `toolchain`: BUILD file not found on package path.
+</code></pre></div>    </div>
+
+    <p>In the workspace directory, create the <code class="highlighter-rouge">toolchain</code> directory for the package
+and an empty <code class="highlighter-rouge">BUILD</code> file inside the <code class="highlighter-rouge">toolchain</code> directory.</p>
+  </li>
+  <li>
+    <p>Run the build again. Because the <code class="highlighter-rouge">toolchain</code> package does not yet define the
+<code class="highlighter-rouge">clang_suite</code> target, Bazel throws the following error:</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>No such target '//toolchain:clang_suite': target 'clang_suite' not declared
+in package 'toolchain' defined by .../toolchain/BUILD
+</code></pre></div>    </div>
+
+    <p>In the <code class="highlighter-rouge">toolchain/BUILD</code> file, define an empty filegroup as follows:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">package</span><span class="p">(</span><span class="n">default_visibility</span> <span class="o">=</span> <span class="p">[</span><span class="s">"//visibility:public"</span><span class="p">])</span>
+
+<span class="n">filegroup</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"clang_suite"</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Run the build again. Bazel throws the following error:</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'//toolchain:clang_suite' does not have mandatory providers: 'ToolchainInfo'
+</code></pre></div>    </div>
+
+    <p>Bazel discovered that the <code class="highlighter-rouge">--crosstool_top</code> flag points to a rule that
+doesn’t provide the necessary <a href="https://docs.bazel.build/versions/main/skylark/lib/ToolchainInfo.html"><code class="highlighter-rouge">ToolchainInfo</code></a>
+provider. So you need to point <code class="highlighter-rouge">--crosstool_top</code> to a rule that does provide
+<code class="highlighter-rouge">ToolchainInfo</code> - that is the <code class="highlighter-rouge">cc_toolchain_suite</code> rule. In the
+<code class="highlighter-rouge">toolchain/BUILD</code> file, replace the empty filegroup with the following:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cc_toolchain_suite</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">"clang_suite"</span><span class="p">,</span>
+    <span class="n">toolchains</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">"k8"</span><span class="p">:</span> <span class="s">":k8_toolchain"</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>    </div>
+
+    <p>The <code class="highlighter-rouge">toolchains</code> attribute automatically maps the <code class="highlighter-rouge">--cpu</code> (and also
+<code class="highlighter-rouge">--compiler</code> when specified) values to  <code class="highlighter-rouge">cc_toolchain</code>. You have not yet
+defined any <code class="highlighter-rouge">cc_toolchain</code> targets and Bazel will complain about that
+shortly.</p>
+  </li>
+  <li>
+    <p>Run the build again. Bazel throws the following error:</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Rule '//toolchain:k8_toolchain' does not exist
+</code></pre></div>    </div>
+
+    <p>Now you need to define <code class="highlighter-rouge">cc_toolchain</code> targets for every value in the
+<code class="highlighter-rouge">cc_toolchain_suite.toolchains</code> attribute. Add the following to the
+<code class="highlighter-rouge">toolchain/BUILD</code> file:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">filegroup</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"empty"</span><span class="p">)</span>
+
+<span class="n">cc_toolchain</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">"k8_toolchain"</span><span class="p">,</span>
+    <span class="n">toolchain_identifier</span> <span class="o">=</span> <span class="s">"k8-toolchain"</span><span class="p">,</span>
+    <span class="n">toolchain_config</span> <span class="o">=</span> <span class="s">":k8_toolchain_config"</span><span class="p">,</span>
+    <span class="n">all_files</span> <span class="o">=</span> <span class="s">":empty"</span><span class="p">,</span>
+    <span class="n">compiler_files</span> <span class="o">=</span> <span class="s">":empty"</span><span class="p">,</span>
+    <span class="n">dwp_files</span> <span class="o">=</span> <span class="s">":empty"</span><span class="p">,</span>
+    <span class="n">linker_files</span> <span class="o">=</span> <span class="s">":empty"</span><span class="p">,</span>
+    <span class="n">objcopy_files</span> <span class="o">=</span> <span class="s">":empty"</span><span class="p">,</span>
+    <span class="n">strip_files</span> <span class="o">=</span> <span class="s">":empty"</span><span class="p">,</span>
+    <span class="n">supports_param_files</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Run the build again. Bazel throws the following error:</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Rule '//toolchain:k8_toolchain_config' does not exist
+</code></pre></div>    </div>
+
+    <p>Next, add a “:k8_toolchain_config” target to the <code class="highlighter-rouge">toolchain/BUILD</code> file:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">filegroup</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"k8_toolchain_config"</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Run the build again. Bazel throws the following error:</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'//toolchain:k8_toolchain_config' does not have mandatory providers:
+'CcToolchainConfigInfo'
+</code></pre></div>    </div>
+
+    <p><code class="highlighter-rouge">CcToolchainConfigInfo</code> is a provider that you use to configure
+your C++ toolchains. To fix this error, create a Starlark rule
+that provides <code class="highlighter-rouge">CcToolchainConfigInfo</code> to Bazel by making a
+<code class="highlighter-rouge">toolchain/cc_toolchain_config.bzl</code> file with the following content:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">_impl</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">cc_common</span><span class="p">.</span><span class="n">create_cc_toolchain_config_info</span><span class="p">(</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">ctx</span><span class="p">,</span>
+        <span class="n">toolchain_identifier</span> <span class="o">=</span> <span class="s">"k8-toolchain"</span><span class="p">,</span>
+        <span class="n">host_system_name</span> <span class="o">=</span> <span class="s">"local"</span><span class="p">,</span>
+        <span class="n">target_system_name</span> <span class="o">=</span> <span class="s">"local"</span><span class="p">,</span>
+        <span class="n">target_cpu</span> <span class="o">=</span> <span class="s">"k8"</span><span class="p">,</span>
+        <span class="n">target_libc</span> <span class="o">=</span> <span class="s">"unknown"</span><span class="p">,</span>
+        <span class="n">compiler</span> <span class="o">=</span> <span class="s">"clang"</span><span class="p">,</span>
+        <span class="n">abi_version</span> <span class="o">=</span> <span class="s">"unknown"</span><span class="p">,</span>
+        <span class="n">abi_libc_version</span> <span class="o">=</span> <span class="s">"unknown"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="n">cc_toolchain_config</span> <span class="o">=</span> <span class="n">rule</span><span class="p">(</span>
+    <span class="n">implementation</span> <span class="o">=</span> <span class="n">_impl</span><span class="p">,</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="n">provides</span> <span class="o">=</span> <span class="p">[</span><span class="n">CcToolchainConfigInfo</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div>    </div>
+
+    <p><code class="highlighter-rouge">cc_common.create_cc_toolchain_config_info()</code> creates the needed provider
+<code class="highlighter-rouge">CcToolchainConfigInfo</code>. To use the <code class="highlighter-rouge">cc_toolchain_config</code> rule, add a load
+statement to <code class="highlighter-rouge">toolchains/BUILD</code>:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">load</span><span class="p">(</span><span class="s">":cc_toolchain_config.bzl"</span><span class="p">,</span> <span class="s">"cc_toolchain_config"</span><span class="p">)</span>
+</code></pre></div>    </div>
+
+    <p>And replace the “k8_toolchain_config” filegroup with a declaration of a
+<code class="highlighter-rouge">cc_toolchain_config</code> rule:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cc_toolchain_config</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"k8_toolchain_config"</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Run the build again. Bazel throws the following error:</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.../BUILD:1:1: C++ compilation of rule '//:hello-world' failed (Exit 1)
+src/main/tools/linux-sandbox-pid1.cc:421:
+"execvp(toolchain/DUMMY_GCC_TOOL, 0x11f20e0)": No such file or directory
+Target //:hello-world failed to build`
+</code></pre></div>    </div>
+
+    <p>At this point, Bazel has enough information to attempt building the code but
+it still does not know what tools to use to complete the required build
+actions. You will modify the Starlark rule implementation to tell Bazel what
+tools to use. For that, you need the tool_path() constructor from
+<a href="https://source.bazel.build/bazel/+/4eea5c62a566d21832c93e4c18ec559e75d5c1ce:tools/cpp/cc_toolchain_config_lib.bzl;l=400"><code class="highlighter-rouge">@bazel_tools//tools/cpp:cc_toolchain_config_lib.bzl</code></a>:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># toolchain/cc_toolchain_config.bzl:
+# NEW
+</span><span class="n">load</span><span class="p">(</span><span class="s">"@bazel_tools//tools/cpp:cc_toolchain_config_lib.bzl"</span><span class="p">,</span> <span class="s">"tool_path"</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_impl</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+    <span class="n">tool_paths</span> <span class="o">=</span> <span class="p">[</span> <span class="c1"># NEW
+</span>        <span class="n">tool_path</span><span class="p">(</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s">"gcc"</span><span class="p">,</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="s">"/usr/bin/clang"</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">tool_path</span><span class="p">(</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s">"ld"</span><span class="p">,</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="s">"/usr/bin/ld"</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">tool_path</span><span class="p">(</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s">"ar"</span><span class="p">,</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="s">"/usr/bin/ar"</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">tool_path</span><span class="p">(</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s">"cpp"</span><span class="p">,</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="s">"/bin/false"</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">tool_path</span><span class="p">(</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s">"gcov"</span><span class="p">,</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="s">"/bin/false"</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">tool_path</span><span class="p">(</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s">"nm"</span><span class="p">,</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="s">"/bin/false"</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">tool_path</span><span class="p">(</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s">"objdump"</span><span class="p">,</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="s">"/bin/false"</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">tool_path</span><span class="p">(</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s">"strip"</span><span class="p">,</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="s">"/bin/false"</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">cc_common</span><span class="p">.</span><span class="n">create_cc_toolchain_config_info</span><span class="p">(</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">ctx</span><span class="p">,</span>
+        <span class="n">toolchain_identifier</span> <span class="o">=</span> <span class="s">"local"</span><span class="p">,</span>
+        <span class="n">host_system_name</span> <span class="o">=</span> <span class="s">"local"</span><span class="p">,</span>
+        <span class="n">target_system_name</span> <span class="o">=</span> <span class="s">"local"</span><span class="p">,</span>
+        <span class="n">target_cpu</span> <span class="o">=</span> <span class="s">"k8"</span><span class="p">,</span>
+        <span class="n">target_libc</span> <span class="o">=</span> <span class="s">"unknown"</span><span class="p">,</span>
+        <span class="n">compiler</span> <span class="o">=</span> <span class="s">"clang"</span><span class="p">,</span>
+        <span class="n">abi_version</span> <span class="o">=</span> <span class="s">"unknown"</span><span class="p">,</span>
+        <span class="n">abi_libc_version</span> <span class="o">=</span> <span class="s">"unknown"</span><span class="p">,</span>
+        <span class="n">tool_paths</span> <span class="o">=</span> <span class="n">tool_paths</span><span class="p">,</span> <span class="c1"># NEW
+</span>    <span class="p">)</span>
+</code></pre></div>    </div>
+
+    <p>Make sure that <code class="highlighter-rouge">/usr/bin/clang</code> and <code class="highlighter-rouge">/usr/bin/ld</code> are the correct paths
+for your system.</p>
+  </li>
+  <li>Run the build again. Bazel throws the following error:
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ..../BUILD:3:1: undeclared inclusion(s) in rule '//main:hello-world':
+ this rule is missing dependency declarations for the following files included by 'main/hello-world.cc':
+ '/usr/include/c++/9/ctime'
+ '/usr/include/x86_64-linux-gnu/c++/9/bits/c++config.h'
+ '/usr/include/x86_64-linux-gnu/c++/9/bits/os_defines.h'
+ ....
+</code></pre></div>    </div>
+    <p>Bazel needs to know where to search for included headers. There are
+ multiple ways to solve this, such as using the <code class="highlighter-rouge">includes</code> attribute of
+ <code class="highlighter-rouge">cc_binary</code>, but here this is solved at the toolchain level with the
+ <a href="https://docs.bazel.build/versions/main/skylark/lib/cc_common.html#create_cc_toolchain_config_info"><code class="highlighter-rouge">cxx_builtin_include_directories</code></a>
+ parameter of <code class="highlighter-rouge">cc_common.create_cc_toolchain_config_info</code>. Beware that if
+ you are using a different version of <code class="highlighter-rouge">clang</code>, the include path will be
+ different. These paths may also be different depending on the distribution.</p>
+
+    <p>Modify the return value in <code class="highlighter-rouge">toolchain/cc_toolchain_config.bzl</code> to look
+ like this:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">return</span> <span class="n">cc_common</span><span class="p">.</span><span class="n">create_cc_toolchain_config_info</span><span class="p">(</span>
+      <span class="n">ctx</span> <span class="o">=</span> <span class="n">ctx</span><span class="p">,</span>
+      <span class="n">cxx_builtin_include_directories</span> <span class="o">=</span> <span class="p">[</span> <span class="c1"># NEW
+</span>        <span class="s">"/usr/lib/llvm-9/lib/clang/9.0.1/include"</span><span class="p">,</span>
+        <span class="s">"/usr/include"</span><span class="p">,</span>
+      <span class="p">],</span>
+      <span class="n">toolchain_identifier</span> <span class="o">=</span> <span class="s">"local"</span><span class="p">,</span>
+      <span class="n">host_system_name</span> <span class="o">=</span> <span class="s">"local"</span><span class="p">,</span>
+      <span class="n">target_system_name</span> <span class="o">=</span> <span class="s">"local"</span><span class="p">,</span>
+      <span class="n">target_cpu</span> <span class="o">=</span> <span class="s">"k8"</span><span class="p">,</span>
+      <span class="n">target_libc</span> <span class="o">=</span> <span class="s">"unknown"</span><span class="p">,</span>
+      <span class="n">compiler</span> <span class="o">=</span> <span class="s">"clang"</span><span class="p">,</span>
+      <span class="n">abi_version</span> <span class="o">=</span> <span class="s">"unknown"</span><span class="p">,</span>
+      <span class="n">abi_libc_version</span> <span class="o">=</span> <span class="s">"unknown"</span><span class="p">,</span>
+      <span class="n">tool_paths</span> <span class="o">=</span> <span class="n">tool_paths</span><span class="p">,</span>
+ <span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Run the build command again, you will see an error like:
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> /usr/bin/ld: bazel-out/k8-fastbuild/bin/main/_objs/hello-world/hello-world.o: in function `print_localtime()':
+ hello-world.cc:(.text+0x68): undefined reference to `std::cout'
+</code></pre></div>    </div>
+    <p>The reason for this is because the linker is missing the C++ standard
+ library and it can’t find its symbols. There are many ways to solve this,
+ such as using the <code class="highlighter-rouge">linkopts</code> attribute of <code class="highlighter-rouge">cc_binary</code>. Here it is solved by
+ making sure that any target using the toolchain doesn’t have to specify
+ this flag.</p>
+
+    <p>Copy the following code to <code class="highlighter-rouge">cc_toolchain_config.bzl</code>:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   <span class="c1"># NEW
+</span>   <span class="n">load</span><span class="p">(</span><span class="s">"@bazel_tools//tools/build_defs/cc:action_names.bzl"</span><span class="p">,</span> <span class="s">"ACTION_NAMES"</span><span class="p">)</span>
+   <span class="c1"># NEW
+</span>   <span class="n">load</span><span class="p">(</span>
+       <span class="s">"@bazel_tools//tools/cpp:cc_toolchain_config_lib.bzl"</span><span class="p">,</span>
+       <span class="s">"feature"</span><span class="p">,</span>
+       <span class="s">"flag_group"</span><span class="p">,</span>
+       <span class="s">"flag_set"</span><span class="p">,</span>
+       <span class="s">"tool_path"</span><span class="p">,</span>
+   <span class="p">)</span>
+
+   <span class="n">all_link_actions</span> <span class="o">=</span> <span class="p">[</span> <span class="c1"># NEW
+</span>       <span class="n">ACTION_NAMES</span><span class="p">.</span><span class="n">cpp_link_executable</span><span class="p">,</span>
+       <span class="n">ACTION_NAMES</span><span class="p">.</span><span class="n">cpp_link_dynamic_library</span><span class="p">,</span>
+       <span class="n">ACTION_NAMES</span><span class="p">.</span><span class="n">cpp_link_nodeps_dynamic_library</span><span class="p">,</span>
+   <span class="p">]</span>
+
+   <span class="k">def</span> <span class="nf">_impl</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+       <span class="n">tool_paths</span> <span class="o">=</span> <span class="p">[</span>
+           <span class="n">tool_path</span><span class="p">(</span>
+               <span class="n">name</span> <span class="o">=</span> <span class="s">"gcc"</span><span class="p">,</span>
+               <span class="n">path</span> <span class="o">=</span> <span class="s">"/usr/bin/clang"</span><span class="p">,</span>
+           <span class="p">),</span>
+           <span class="n">tool_path</span><span class="p">(</span>
+               <span class="n">name</span> <span class="o">=</span> <span class="s">"ld"</span><span class="p">,</span>
+               <span class="n">path</span> <span class="o">=</span> <span class="s">"/usr/bin/ld"</span><span class="p">,</span>
+           <span class="p">),</span>
+           <span class="n">tool_path</span><span class="p">(</span>
+               <span class="n">name</span> <span class="o">=</span> <span class="s">"ar"</span><span class="p">,</span>
+               <span class="n">path</span> <span class="o">=</span> <span class="s">"/bin/false"</span><span class="p">,</span>
+           <span class="p">),</span>
+           <span class="n">tool_path</span><span class="p">(</span>
+               <span class="n">name</span> <span class="o">=</span> <span class="s">"cpp"</span><span class="p">,</span>
+               <span class="n">path</span> <span class="o">=</span> <span class="s">"/bin/false"</span><span class="p">,</span>
+           <span class="p">),</span>
+           <span class="n">tool_path</span><span class="p">(</span>
+               <span class="n">name</span> <span class="o">=</span> <span class="s">"gcov"</span><span class="p">,</span>
+               <span class="n">path</span> <span class="o">=</span> <span class="s">"/bin/false"</span><span class="p">,</span>
+           <span class="p">),</span>
+           <span class="n">tool_path</span><span class="p">(</span>
+               <span class="n">name</span> <span class="o">=</span> <span class="s">"nm"</span><span class="p">,</span>
+               <span class="n">path</span> <span class="o">=</span> <span class="s">"/bin/false"</span><span class="p">,</span>
+           <span class="p">),</span>
+           <span class="n">tool_path</span><span class="p">(</span>
+               <span class="n">name</span> <span class="o">=</span> <span class="s">"objdump"</span><span class="p">,</span>
+               <span class="n">path</span> <span class="o">=</span> <span class="s">"/bin/false"</span><span class="p">,</span>
+           <span class="p">),</span>
+           <span class="n">tool_path</span><span class="p">(</span>
+               <span class="n">name</span> <span class="o">=</span> <span class="s">"strip"</span><span class="p">,</span>
+               <span class="n">path</span> <span class="o">=</span> <span class="s">"/bin/false"</span><span class="p">,</span>
+           <span class="p">),</span>
+       <span class="p">]</span>
+
+       <span class="n">features</span> <span class="o">=</span> <span class="p">[</span> <span class="c1"># NEW
+</span>           <span class="n">feature</span><span class="p">(</span>
+               <span class="n">name</span> <span class="o">=</span> <span class="s">"default_linker_flags"</span><span class="p">,</span>
+               <span class="n">enabled</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
+               <span class="n">flag_sets</span> <span class="o">=</span> <span class="p">[</span>
+                   <span class="n">flag_set</span><span class="p">(</span>
+                       <span class="n">actions</span> <span class="o">=</span> <span class="n">all_link_actions</span><span class="p">,</span>
+                       <span class="n">flag_groups</span> <span class="o">=</span> <span class="p">([</span>
+                           <span class="n">flag_group</span><span class="p">(</span>
+                               <span class="n">flags</span> <span class="o">=</span> <span class="p">[</span>
+                                   <span class="s">"-lstdc++"</span><span class="p">,</span>
+                               <span class="p">],</span>
+                           <span class="p">),</span>
+                       <span class="p">]),</span>
+                   <span class="p">),</span>
+               <span class="p">],</span>
+           <span class="p">),</span>
+       <span class="p">]</span>
+
+       <span class="k">return</span> <span class="n">cc_common</span><span class="p">.</span><span class="n">create_cc_toolchain_config_info</span><span class="p">(</span>
+           <span class="n">ctx</span> <span class="o">=</span> <span class="n">ctx</span><span class="p">,</span>
+           <span class="n">features</span> <span class="o">=</span> <span class="n">features</span><span class="p">,</span> <span class="c1"># NEW
+</span>           <span class="n">cxx_builtin_include_directories</span> <span class="o">=</span> <span class="p">[</span>
+               <span class="s">"/usr/lib/llvm-9/lib/clang/9.0.1/include"</span><span class="p">,</span>
+               <span class="s">"/usr/include"</span><span class="p">,</span>
+           <span class="p">],</span>
+           <span class="n">toolchain_identifier</span> <span class="o">=</span> <span class="s">"local"</span><span class="p">,</span>
+           <span class="n">host_system_name</span> <span class="o">=</span> <span class="s">"local"</span><span class="p">,</span>
+           <span class="n">target_system_name</span> <span class="o">=</span> <span class="s">"local"</span><span class="p">,</span>
+           <span class="n">target_cpu</span> <span class="o">=</span> <span class="s">"k8"</span><span class="p">,</span>
+           <span class="n">target_libc</span> <span class="o">=</span> <span class="s">"unknown"</span><span class="p">,</span>
+           <span class="n">compiler</span> <span class="o">=</span> <span class="s">"clang"</span><span class="p">,</span>
+           <span class="n">abi_version</span> <span class="o">=</span> <span class="s">"unknown"</span><span class="p">,</span>
+           <span class="n">abi_libc_version</span> <span class="o">=</span> <span class="s">"unknown"</span><span class="p">,</span>
+           <span class="n">tool_paths</span> <span class="o">=</span> <span class="n">tool_paths</span><span class="p">,</span>
+       <span class="p">)</span>
+
+   <span class="n">cc_toolchain_config</span> <span class="o">=</span> <span class="n">rule</span><span class="p">(</span>
+       <span class="n">implementation</span> <span class="o">=</span> <span class="n">_impl</span><span class="p">,</span>
+       <span class="n">attrs</span> <span class="o">=</span> <span class="p">{},</span>
+       <span class="n">provides</span> <span class="o">=</span> <span class="p">[</span><span class="n">CcToolchainConfigInfo</span><span class="p">],</span>
+   <span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li>If you run <code class="highlighter-rouge">bazel build --config=clang_config //main:hello-world</code>, it should
+finally build.</li>
+</ol>
+
+<h2 id="review-your-work">Review your work<a class="anchorjs-link " href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#review-your-work" aria-label="Anchor link for: review your work" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; line-height: 1; padding-left: 0.375em;"></a></h2>
+
+<p>In this tutorial you learned how to configure a basic C++ toolchain, but
+toolchains are more powerful than this simple example.</p>
+
+<p>The key take-aways are:</p>
+<ul>
+  <li>You need to specify a <code class="highlighter-rouge">--crosstool_top</code> flag in the command line which should
+point to a <code class="highlighter-rouge">cc_toolchain_suite</code></li>
+  <li>You can create a shortcut for a particular configuration using the <code class="highlighter-rouge">.bazelrc</code>
+file</li>
+  <li>The cc_toolchain_suite may list <code class="highlighter-rouge">cc_toolchains</code> for different CPUs and
+compilers. You can use command line flags like <code class="highlighter-rouge">--cpu</code> to differentiate.</li>
+  <li>You have to let the toolchain know where the tools live. In this tutorial
+there is a simplified version where you access the tools from the system. If
+you are interested in a more self-contained approach, you can read about
+workspaces <a href="https://docs.bazel.build/versions/main/be/workspace.html">here</a>. Your tools could come from a
+different workspace and you would have to make their files available
+to the <code class="highlighter-rouge">cc_toolchain</code> with target dependencies on attributes, such as
+<code class="highlighter-rouge">compiler_files</code>. The <code class="highlighter-rouge">tool_paths</code> would need to be changed as well.</li>
+  <li>You can create features to customize which flags should be passed to
+different actions, be it linking or any other type of action.</li>
+</ul>
+
+<h2 id="further-reading">Further reading<a class="anchorjs-link " href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#further-reading" aria-label="Anchor link for: further reading" data-anchorjs-icon="" style="font-family: anchorjs-icons; font-style: normal; font-variant: normal; font-weight: normal; line-height: 1; padding-left: 0.375em;"></a></h2>
+
+<p>For more details, see <a href="https://docs.bazel.build/versions/main/cc-toolchain-config-reference.html">C++ toolchain configuration</a></p>
+
+          </div>
+        </div>
+
+        <div class="col-md-2 sticky-sidebar">
+            <div class="right-sidebar">
+                <ul class="gh-links">
+                    <li><a href="https://github.com/bazelbuild/bazel/issues/new?title=Documentation%20issue:%20Configuring%20C++%20toolchains&amp;body=Documentation%20URL:%20https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html&amp;labels=type:%20documentation"><i class="fa fa-github"></i> Create issue</a></li>
+                    <li id="gh-edit-list-item" class="default-hidden" aria-hidden="true" style="visibility: visible;"><a id="gh-edit" class="gh-edit default-hidden" href="https://github.com/bazelbuild/bazel/tree/master/site/docs/tutorial/cc-toolchain-config.md" style="visibility: visible;"><i class="fa fa-pencil" aria-hidden="true"></i> Edit this page</a></li>
+                </ul>
+                <script async="" src="./tutorial_files/analytics.js"></script><script>
+                 var versionDocsURLRegex = /\/versions\/[\w\.]+\/(.*)/;
+                 var ghDocsBazeURL = 'https://github.com/bazelbuild/bazel/tree/master/site/docs/';
+                 var editButton = document.getElementById('gh-edit');
+                 var editButtonListItem = document.getElementById('gh-edit-list-item');
+                 // if there is an edit button and we are not in the Build Encyclopedia
+                 // or other generated files.
+                 if (editButton
+                     && window.location.pathname.match(versionDocsURLRegex)
+                     && window.location.pathname.lastIndexOf('/be/') == -1
+                     && window.location.pathname.lastIndexOf('/repo/') == -1
+                     && window.location.pathname.lastIndexOf('/skylark/lib/') == -1
+                     && window.location.pathname.lastIndexOf('/command-line-reference.html') == -1) {
+                     var docFile = window.location.pathname.match(versionDocsURLRegex)[1];
+                     // some pages are not using markdown :(
+                     if (docFile !== 'user-manual.html'
+                         && docFile !== 'build-ref.html'
+                         && docFile !== 'query.html'
+                         && docFile !== 'test-encyclopedia.html') {
+                         docFile = docFile.replace('html', 'md');
+                     }
+                     editButton.href = ghDocsBazeURL + docFile;
+                     editButton.style.visibility = 'visible';
+                     editButtonListItem.style.visibility = 'visible';
+                 }
+                </script>
+
+                <ul class="page-toc">
+<li class="toc-entry toc-h2"><a href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#what-youll-learn">What you’ll learn</a></li>
+<li class="toc-entry toc-h2"><a href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#before-you-begin">Before you begin</a>
+<ul class="page-toc-sublist">
+<li class="toc-entry toc-h3"><a href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#set-up-the-build-environment">Set up the build environment</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#configuring-the-c-toolchain">Configuring the C++ toolchain</a></li>
+<li class="toc-entry toc-h2"><a href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#review-your-work">Review your work</a></li>
+<li class="toc-entry toc-h2"><a href="https://docs.bazel.build/versions/main/tutorial/cc-toolchain-config.html#further-reading">Further reading</a></li>
+</ul>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Satisfaction Survey -->
+    <script async="" defer="" src="./tutorial_files/f.txt"></script>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-4 col-md-2">
+      <p>About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://github.com/bazelbuild/bazel/wiki/Bazel-Users">Who's Using Bazel?</a></li>
+        <li><a href="https://www.bazel.build/roadmap.html">Roadmap</a></li>
+        <li><a href="https://www.bazel.build/contributing.html">Contribute</a></li>
+        <li><a href="https://www.bazel.build/governance.html">Governance Plan</a></li>
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://docs.bazel.build/guide.html/sitemap.xml">Sitemap</a></li>
+      </ul>
+    </div>
+    <div class="col-sm-4 col-md-2">
+      <p>Support</p>
+      <ul class="list-unstyled">
+        <li><a href="http://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue Tracker</a></li>
+        <li><a href="https://docs.bazel.build/guide.html">Documentation</a></li>
+        <li><a href="https://www.bazel.build/faq.html">FAQ</a></li>
+        <li><a href="https://www.bazel.build/support.html">Support Policy</a></li>
+      </ul>
+    </div>
+    <div class="col-sm-4 col-md-2">
+      <p>Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://twitter.com/bazelbuild">Twitter</a></li>
+        <li><a href="https://blog.bazel.build/">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://groups.google.com/forum/#!forum/bazel-discuss">Discussion group</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">© 2022 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="./tutorial_files/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="./tutorial_files/bootstrap.min.js"></script>
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="./tutorial_files/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add();
+    </script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+  
+
+</body></html>
