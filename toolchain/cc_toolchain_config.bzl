@@ -13,6 +13,14 @@ all_link_actions = [
     ACTION_NAMES.cpp_link_nodeps_dynamic_library,
 ]
 
+all_compile_actions = [
+    ACTION_NAMES.c_compile,
+    ACTION_NAMES.cpp_compile,
+    ACTION_NAMES.linkstamp_compile
+
+]
+
+
 def _impl(ctx):
     tool_paths = [
         tool_path(
@@ -63,6 +71,24 @@ def _impl(ctx):
                             ],
                         ),
                     ]),
+                ),
+            ],
+        ),
+        feature(
+            # See: https://stackoverflow.com/questions/63588902/in-bazel-how-to-prevent-some-c-compiler-flags-from-passing-to-external-depend
+            name = "warning_flags",
+            enabled = True,
+            flag_sets = [
+                flag_set(
+                    actions = all_compile_actions,
+                    flag_groups = [
+                        flag_group(
+                            flags = [
+                                "-Wall",
+                                "-Werror",
+                            ],
+                        ),
+                    ],
                 ),
             ],
         ),

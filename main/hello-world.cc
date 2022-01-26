@@ -3,7 +3,8 @@
 #include <iostream>
 
 std::string get_greet(const std::string& who) {
-  return "Hello " + who;
+  int i=0;
+  return "Hello " + who;;
 }
 
 void print_localtime() {
